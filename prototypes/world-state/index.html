@@ -1417,24 +1417,29 @@ footer .mtog,footer .msoc{display:none}
 .mast .home .mark{width:30px;height:30px;flex:none}
 #cover .coverhead{gap:10px}
 
-.gate{display:inline-flex;align-items:center;gap:8px;margin-right:10px}
-.gate .gstate{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:2px}
-.gate .gstate.holder{color:var(--good);border-color:var(--good)}
-.gate .gstate.locked,.gate .gstate.invalid{color:var(--hot);border-color:var(--hot)}
-.gate button,.lockednote .keylink{font:inherit;font-family:var(--ui);font-size:11.5px;letter-spacing:.04em;color:var(--ring-text);background:none;border:1px solid var(--ring);padding:3px 9px;border-radius:2px;cursor:pointer}
-.lockednote{margin:14px 0 4px;padding:12px 14px;border:1px dashed var(--ring);font-family:var(--body);font-size:14px;line-height:1.5;color:var(--muted)}
-.lockednote .keylink{margin-left:6px}
-.archivebar.hidden{display:none}
-.archivebar{display:flex;gap:14px;align-items:center;margin:8px 0 14px;padding:10px 14px;border:1px solid var(--ring);background:rgba(209,167,76,.08);font-family:var(--ui);font-size:13px}
-.archivebar button{font:inherit;color:var(--ring-text);background:none;border:0;cursor:pointer;text-decoration:underline}
-#keydlg{border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:0;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+/* shared across the forecast pages: the holder gate chip, the key dialog, the labels */
+.gate{display:inline-flex;align-items:center;gap:8px}
+.gate .gstate{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:2px;white-space:nowrap;line-height:1.2}
+.gate .gstate.holder{color:var(--good,#6fb8a3);border-color:currentColor}
+.gate .gstate.locked,.gate .gstate.invalid{color:var(--hot);border-color:currentColor}
+.gate button,.lockednote .keylink{font:inherit;font-family:var(--ui);font-size:11.5px;letter-spacing:.02em;line-height:1.2;color:var(--ring-text,var(--gold));background:none;border:1px solid var(--ring,var(--gold));padding:4px 10px;border-radius:2px;cursor:pointer;white-space:nowrap}
+#keydlg{border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:22px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
 #keydlg::backdrop{background:rgba(10,10,12,.45)}
-#keydlg input{width:100%;box-sizing:border-box;font-family:var(--mono);font-size:14px;padding:10px 12px;border:1px solid var(--rule);background:none;color:var(--ink);margin:10px 0 4px}
+#keydlg .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#keydlg h2{font-family:var(--serif,var(--body));font-weight:400;font-size:24px;margin:6px 0 8px;letter-spacing:-.01em}
+#keydlg p{font-family:var(--body);font-size:14.5px;line-height:1.5;color:var(--muted);margin:0 0 6px}
+#keydlg p a{color:inherit}
+#keydlg input{width:100%;box-sizing:border-box;font-family:var(--mono);font-size:14px;padding:10px 12px;border:1px solid var(--rule);background:none;color:var(--ink);margin:8px 0 4px;display:block}
 #keydlg .kerr{color:var(--hot);font-family:var(--mono);font-size:11.5px;min-height:1.4em;margin:0 0 8px}
 #keydlg .row{display:flex;gap:8px}
 #keydlg .row button{font:inherit;font-family:var(--ui);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:1px solid var(--rule);background:var(--ink);color:var(--bg);cursor:pointer}
 #keydlg .row button.kcancel{background:none;color:var(--ink)}
 footer a.disc{font-weight:700}
+.legal{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400}
+.legal a{color:inherit}
+.legal a.disc{font-weight:700}
+
+.gate{margin-right:10px}
 #attest{border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:24px;max-width:520px;width:calc(100% - 32px)}
 #attest::backdrop{background:rgba(10,10,12,.7)}
 #attest .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted)}
@@ -1595,16 +1600,16 @@ footer a.disc{font-weight:700}
   </div>
 
   <dialog id="keydlg" aria-labelledby="key-h">
-    <form class="signin">
-      <div class="num">HOLDERS · YOUR UBIK.GOLD KEY</div>
-      <h2 id="key-h" class="t">Open the holder parts here.</h2>
-      <p class="lede">Sign in at <a href="https://ubik.gold" target="_blank" rel="noopener">ubik.gold</a> with a wallet that holds 200,000 UBIK and copy the key it gives you. The key stays in this browser; the desk passes it to ubik.gold and keeps nothing.</p>
-      <input type="password" autocomplete="off" placeholder="paste the key" aria-label="ubik.gold key">
-      <p class="kerr" role="alert"></p>
-      <div class="row"><button type="submit">Open</button><button type="button" class="kcancel">Cancel</button></div>
-    </form>
-  </dialog>
-  <dialog id="signin" aria-labelledby="signin-h">
+  <form class="keyform">
+    <div class="k">HOLDERS · YOUR UBIK.GOLD KEY</div>
+    <h2 id="key-h">Open the holder parts here.</h2>
+    <p>Sign in at <a href="https://ubik.gold" target="_blank" rel="noopener">ubik.gold</a> with a wallet that holds 200,000 UBIK and copy the key it gives you. The key stays in this browser; the desk passes it to ubik.gold and keeps nothing.</p>
+    <input type="password" autocomplete="off" placeholder="paste the key" aria-label="ubik.gold key">
+    <p class="kerr" role="alert"></p>
+    <div class="row"><button type="submit">Open</button><button type="button" class="kcancel">Cancel</button></div>
+  </form>
+</dialog>
+<dialog id="signin" aria-labelledby="signin-h">
     <form method="dialog" class="signin">
       <div class="num">SIGN IN · KEEP YOUR FEED</div>
       <h2 id="signin-h" class="t">Your feed, on every device.</h2>
@@ -1644,7 +1649,7 @@ footer a.disc{font-weight:700}
 </dialog>
 <footer>
     <span>The Archive remembers. UBIK forms a view.</span>
-    <span><a href="../disclaimer/" class="disc">Disclaimer</a> · <a href="https://ubik.gold/terms" target="_blank" rel="noopener">ubik.gold terms</a>. Not financial advice. For entertainment and education only. Built on content published by ubik.gold; a non-commercial, community-run initiative. AI-generated. Not for persons under 18 or in the United States.</span>
+    <span class="legal"><a href="../disclaimer/" class="disc">Disclaimer</a> · <a href="https://ubik.gold/terms" target="_blank" rel="noopener">ubik.gold terms</a>. Not financial advice. For entertainment and education only. Built on content published by ubik.gold; a non-commercial, community-run initiative. AI-generated. Not for persons under 18 or in the United States.</span>
     <span>Provenance: <span class="tag v">VERIFIED</span><span class="tag r">REPORTED</span><span class="tag i">INFERENCE</span><span class="tag f">FORECAST</span></span>
     <span>For models: <a href="https://ubik.gold/llms.txt" target="_blank" rel="noopener">llms.txt</a> · <a href="#agent" data-goto="agent">API and MCP</a></span>
     <span><a href="#cover" id="coverlink">Cover</a></span>

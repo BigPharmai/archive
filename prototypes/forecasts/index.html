@@ -216,22 +216,29 @@ body.history .lede p,body.history .moves{display:none}
 .where .names span{display:inline-block;border:1px solid var(--line);padding:2px 8px;margin:0 6px 4px 0;font-family:var(--ui)}
 .where small{display:block;color:var(--muted);font-family:var(--mono);font-size:10.5px}
 
-.gate{display:inline-flex;align-items:center;gap:6px;margin-left:8px}
-.gate .gstate{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);padding:3px 7px;border-radius:2px;white-space:nowrap}
+/* shared across the forecast pages: the holder gate chip, the key dialog, the labels */
+.gate{display:inline-flex;align-items:center;gap:8px}
+.gate .gstate{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);padding:4px 8px;border-radius:2px;white-space:nowrap;line-height:1.2}
 .gate .gstate.holder{color:var(--good,#6fb8a3);border-color:currentColor}
 .gate .gstate.locked,.gate .gstate.invalid{color:var(--hot);border-color:currentColor}
-.gate button{font:inherit;font-family:var(--ui);font-size:11px;color:var(--gold-ink,var(--gold));background:none;border:1px solid var(--gold);padding:3px 8px;border-radius:2px;cursor:pointer;white-space:nowrap}
-#keydlg{border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:22px;max-width:440px;width:calc(100% - 32px)}
+.gate button,.lockednote .keylink{font:inherit;font-family:var(--ui);font-size:11.5px;letter-spacing:.02em;line-height:1.2;color:var(--ring-text,var(--gold));background:none;border:1px solid var(--ring,var(--gold));padding:4px 10px;border-radius:2px;cursor:pointer;white-space:nowrap}
+#keydlg{border:1px solid var(--rule);background:var(--bg);color:var(--ink);padding:22px;max-width:440px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(0,0,0,.25)}
 #keydlg::backdrop{background:rgba(10,10,12,.45)}
-#keydlg .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--muted)}
-#keydlg h2{font-weight:400;font-size:24px;margin:6px 0 8px}
-#keydlg p{font-size:14px;line-height:1.5;color:var(--muted)}
-#keydlg input{width:100%;box-sizing:border-box;font-family:var(--mono);font-size:14px;padding:10px 12px;border:1px solid var(--rule);background:none;color:var(--ink);margin:8px 0 4px}
+#keydlg .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+#keydlg h2{font-family:var(--serif,var(--body));font-weight:400;font-size:24px;margin:6px 0 8px;letter-spacing:-.01em}
+#keydlg p{font-family:var(--body);font-size:14.5px;line-height:1.5;color:var(--muted);margin:0 0 6px}
+#keydlg p a{color:inherit}
+#keydlg input{width:100%;box-sizing:border-box;font-family:var(--mono);font-size:14px;padding:10px 12px;border:1px solid var(--rule);background:none;color:var(--ink);margin:8px 0 4px;display:block}
 #keydlg .kerr{color:var(--hot);font-family:var(--mono);font-size:11.5px;min-height:1.4em;margin:0 0 8px}
 #keydlg .row{display:flex;gap:8px}
 #keydlg .row button{font:inherit;font-family:var(--ui);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:8px 14px;border:1px solid var(--rule);background:var(--ink);color:var(--bg);cursor:pointer}
 #keydlg .row button.kcancel{background:none;color:var(--ink)}
 footer a.disc{font-weight:700}
+.legal{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400}
+.legal a{color:inherit}
+.legal a.disc{font-weight:700}
+
+.gate{margin-left:8px}
 .holdergate{padding:40px 0 60px}
 .holdergate.hidden{display:none}
 body.gated main.wrap,body.gated nav.tabs,body.gated #moves{display:none}
@@ -309,10 +316,10 @@ body.gated main.wrap,body.gated nav.tabs,body.gated #moves{display:none}
 <footer>
   <div class="wrap">
     <p><b>How to read it.</b> Above 60% the engine leans yes, below 40% it leans no, between it calls the question open. The gap is the engine's probability minus the market's where a contract exists. Names are where the question shows up, listed for reference; nothing here is a position, a recommendation or a suggestion of what to do.</p>
-    <p>Not advice, no price targets. Forecasts are probabilities, not financial advice. Prices are a snapshot; check the venue. Chatter is AIXBT topic data, context only.</p>
+    <p>Not advice, no price targets. Forecasts are probabilities, not financial advice. Market prices are a snapshot, read on the date shown.</p>
     <p class="mono" id="foot"></p>
     <div class="flogo"><span class="fm" id="fmark"></span><span class="fw">Ubikistan Forecasts</span></div>
-    <p class="mono"><a href="../disclaimer/" class="disc">Disclaimer</a> · <a href="https://ubik.gold/terms" target="_blank" rel="noopener">ubik.gold terms</a>. Not financial advice. For entertainment and education only. Built on content published by ubik.gold; a non-commercial, community-run initiative. AI-generated. Not for persons under 18 or in the United States.</p>
+    <p class="legal"><a href="../disclaimer/" class="disc">Disclaimer</a> · <a href="https://ubik.gold/terms" target="_blank" rel="noopener">ubik.gold terms</a>. Not financial advice. For entertainment and education only. Built on content published by ubik.gold; a non-commercial, community-run initiative. AI-generated. Not for persons under 18 or in the United States.</p>
   </div>
 </footer>
 
@@ -426,6 +433,7 @@ async function loadCurrent(){
 function holderGate(state){
   const g=document.getElementById("holdergate"); if(!g) return;
   document.body.classList.toggle("gated", state!==null);
+  renderGate();
   if(state===null){ g.classList.add("hidden"); return; }
   g.classList.remove("hidden");
   const msg={none:"This page is for holders. Sign in at ubik.gold with a wallet that holds "+THRESHOLD+", copy the key it gives you, and enter it here.",
@@ -442,8 +450,8 @@ function holderGate(state){
 })();
 function renderGate(){
   const el=document.getElementById("gate"); if(!el) return; const k=keyOf();
-  const word={holder:"holder · open",locked:"key holds under "+THRESHOLD,invalid:"key not recognised",unknown:"key not checked",none:"public view"}[k?STANDING:"none"]||"public view";
-  el.innerHTML=`<span class="gstate ${k?STANDING:"none"}">${word}${LIVE?" · live":" · snapshot"}</span><button type="button" id="keybtn">${k?"Change key":"Holder? Enter your key"}</button>${k?`<button type="button" id="keyout">Forget</button>`:""}`;
+  const word={holder:"HOLDER · OPEN",locked:"KEY HOLDS UNDER "+THRESHOLD.toUpperCase(),invalid:"KEY NOT RECOGNISED",unknown:"KEY NOT CHECKED YET",none:"HOLDERS ONLY"}[k?STANDING:"none"]||"HOLDERS ONLY";
+  el.innerHTML=`<span class="gstate ${k?STANDING:"none"}">${word}</span><button type="button" id="keybtn">${k?"Change key":"Enter your ubik.gold key"}</button>${k?`<button type="button" id="keyout">Forget key</button>`:""}`;
   document.getElementById("keybtn").addEventListener("click",()=>{ const d=document.getElementById("keydlg"); d.querySelector("input").value=""; d.querySelector(".kerr").textContent=""; d.showModal(); });
   const out=document.getElementById("keyout"); if(out) out.addEventListener("click",()=>{ try{localStorage.removeItem("ubik-key")}catch(e){} STANDING="none"; loadCurrent().catch(renderGate); });
 }
