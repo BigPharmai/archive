@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Ubikistan World State</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=Archivo:wdth,wght@62..125,400..800&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../fonts/fonts.css">
 <style>
 /* Layout: editorial main column (66ch) + 320px sidebar on desktop; sidebar stacks under the edition on phones. Magazine register: serif headlines and text, grotesk small caps, black rules, one red. */
 :root{
@@ -1606,17 +1606,12 @@ footer a.disc{font-weight:700}
     <form method="dialog" class="signin">
       <div class="num">SIGN IN · KEEP YOUR FEED</div>
       <h2 id="signin-h" class="t">Your feed, on every device.</h2>
-      <p class="lede">Themes, places, topics and starred questions live in this browser until you sign in. Signed in, your feed follows you, and your remarks and corroborations carry your handle.</p>
+      <p class="lede">Signed in, your handle shows here and on the Archive, and your remarks and corroborations carry it. Your feed (themes, places, topics, starred questions) stays in this browser for now.</p>
       <div class="providers">
-        <button type="button" data-prov="github">GitHub</button>
-        <button type="button" data-prov="x">X</button>
-        <button type="button" data-prov="wallet">Wallet</button>
+        <button type="button" data-prov="github">Sign in with GitHub</button>
+        <button type="button" data-prov="x">Sign in with X</button>
       </div>
-      <div class="handle hidden" id="signin-handle">
-        <label for="signin-input" class="lab2" id="signin-label">Your handle</label>
-        <div class="row"><span class="at">@</span><input id="signin-input" type="text" autocomplete="off" spellcheck="false" placeholder="handle"><button type="button" id="signin-go">Continue</button></div>
-      </div>
-      <p class="note">PROTOTYPE · signs you in on this device only. The real desk signs in with GitHub or X, as the Archive does, and keeps the feed server-side.</p>
+      <p class="note">Through the Archive's desk, the same sign-in as the Archive uses. The desk keeps your handle and the time you signed in, nothing else.</p>
       <button type="submit" class="close" aria-label="Close">×</button>
     </form>
   </dialog>
@@ -2298,18 +2293,19 @@ function removeTopic(k){ MINE.topics.delete(k); saveMine(); if(view==="ledger"&&
 const followBtn=theme=>`<button type="button" class="follow" data-follow="${theme}" aria-pressed="${MINE.themes.has(theme)}" title="${MINE.themes.has(theme)?"In your feed. Click to stop following.":"Add this theme to your feed"}">${MINE.themes.has(theme)?"In your feed ✓":"+ Add to my feed"}</button>`;
 function wireFollows(root){ root.querySelectorAll(".follow").forEach(b=>b.addEventListener("click",e=>{ e.stopPropagation(); toggleTheme(b.dataset.follow); document.querySelectorAll(`.follow[data-follow="${b.dataset.follow}"]`).forEach(x=>{ const on=MINE.themes.has(b.dataset.follow); x.setAttribute("aria-pressed",on); x.textContent=on?"In your feed ✓":"+ Add to my feed"; }); })); }
 // ---- who is reading. Prototype: a handle kept in this browser. The real desk signs in with GitHub or X. ----
-let USER=null; try{ USER=JSON.parse(localStorage.getItem("ubik-user")||"null"); }catch(e){}
+let USER=null; let TOKEN=null; try{ TOKEN=localStorage.getItem("ubk.session"); }catch(e){}
+function setToken(t){ TOKEN=t; try{ if(t) localStorage.setItem("ubk.session",t); else localStorage.removeItem("ubk.session"); }catch(e){} }
+function signinURL(prov){ let n=""; try{ n=sessionStorage.getItem("ubk.nonce")||""; if(!n){ n=Math.random().toString(36).slice(2)+Date.now().toString(36); sessionStorage.setItem("ubk.nonce",n); } }catch(e){} return DESK+"/auth/"+prov+"?nonce="+encodeURIComponent(n)+"&return="+encodeURIComponent(location.href.split("#")[0]+"#"+(HASH[view]||"#edition").replace("#","")); }
+function whoami(){ if(!TOKEN){ USER=null; renderUser(); return; } fetch(DESK+"/me",{headers:{Authorization:"Bearer "+TOKEN}}).then(r=>r.ok?r.json():null).then(u=>{ USER=u?{provider:u.provider,handle:u.handle}:null; if(!u) setToken(null); renderUser(); },()=>{ renderUser(); }); }
 function renderUser(){ const el=document.getElementById("who"); if(!el) return;
-  el.innerHTML=USER?`<button type="button" class="me" title="Your feed · signed in with ${USER.provider}"><i>${esc((USER.handle||"?")[0].toUpperCase())}</i>@${esc(USER.handle)}<small>${USER.provider}</small></button><button type="button" class="signout">Sign out</button>`:`<button type="button" class="signin-btn">Sign in</button>`;
+  el.innerHTML=USER?`<button type="button" class="me" title="Your feed · signed in with ${USER.provider}"><i>${esc((USER.handle||"?")[0].toUpperCase())}</i>@${esc(USER.handle)}<small>${USER.provider==="x"?"X":"GitHub"}</small></button><button type="button" class="signout">Sign out</button>`:`<button type="button" class="signin-btn">Sign in</button>`;
   const si=el.querySelector(".signin-btn"); if(si) si.addEventListener("click",openSignin);
   const me=el.querySelector(".me"); if(me) me.addEventListener("click",()=>go("ledger",true,"mine"));
-  const so=el.querySelector(".signout"); if(so) so.addEventListener("click",()=>{ USER=null; try{ localStorage.removeItem("ubik-user"); }catch(e){} renderUser(); if(view==="ledger"&&pane==="mine") renderMine(); }); }
-function openSignin(){ const d=document.getElementById("signin"); d.querySelectorAll("[data-prov]").forEach(b=>b.setAttribute("aria-pressed","false")); document.getElementById("signin-handle").classList.add("hidden"); document.getElementById("signin-input").value=""; d.showModal(); }
-(function wireSignin(){ const d=document.getElementById("signin"); let prov=null;
-  d.querySelectorAll("[data-prov]").forEach(b=>b.addEventListener("click",()=>{ prov=b.dataset.prov; d.querySelectorAll("[data-prov]").forEach(x=>x.setAttribute("aria-pressed",x===b)); const h=document.getElementById("signin-handle"); h.classList.remove("hidden"); document.getElementById("signin-label").textContent=prov==="wallet"?"Your ENS name or address":prov==="x"?"Your X handle":"Your GitHub username"; document.getElementById("signin-input").placeholder=prov==="wallet"?"you.eth":"handle"; document.getElementById("signin-input").focus(); }));
-  const go=()=>{ const v=document.getElementById("signin-input").value.trim().replace(/^@/,""); if(!prov||!v) return; USER={provider:prov,handle:v.slice(0,40)}; try{ localStorage.setItem("ubik-user",JSON.stringify(USER)); }catch(e){} d.close(); renderUser(); go("ledger",true,"mine"); };
-  document.getElementById("signin-go").addEventListener("click",go); document.getElementById("signin-input").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); go(); } });
-})();
+  const so=el.querySelector(".signout"); if(so) so.addEventListener("click",()=>{ setToken(null); USER=null; renderUser(); if(view==="ledger"&&pane==="mine") renderMine(); }); }
+function openSignin(){ const d=document.getElementById("signin"); d.showModal(); }
+(function wireSignin(){ const d=document.getElementById("signin"); d.querySelectorAll("[data-prov]").forEach(b=>b.addEventListener("click",()=>{ location.href=signinURL(b.dataset.prov); })); })();
+// back from the desk: #/signed-in?t=...&n=...&back=...
+(function signedIn(){ const h=location.hash||""; if(!h.startsWith("#/signed-in")) return; const q={}; (h.split("?")[1]||"").split("&").forEach(p=>{ const [k,v]=p.split("="); if(k) q[decodeURIComponent(k)]=decodeURIComponent((v||"").replace(/\+/g," ")); }); let mine=""; try{ mine=sessionStorage.getItem("ubk.nonce")||""; sessionStorage.removeItem("ubk.nonce"); }catch(e){} if(q.t&&q.n&&q.n===mine) setToken(q.t); history.replaceState(null,"","#"+(q.back||"edition")); })();
 function updateMineCount(){ const n=mineQuestions().length; for(const id of ["minecnt","feedcnt"]){ const el=document.getElementById(id); if(el) el.textContent=n?n:""; } }
 function inMine(f){ return MINE.stars.has(f.id) || MINE.themes.has(f.theme) || (GEO[f.id]&&MINE.places.has(GEO[f.id][2])) || topicsOf(f).length>0; }
 function mineQuestions(){ return F.filter(inMine); }
@@ -2360,7 +2356,7 @@ function wirePicks(){
   const tf=document.getElementById("topicform"); if(tf) tf.addEventListener("submit",e=>{ e.preventDefault(); addTopic(document.getElementById("topicin").value); });
   const fs=document.getElementById("feed-signin"); if(fs) fs.addEventListener("click",openSignin);
 }
-renderUser();
+renderUser(); whoami();
 updateMineCount();
 
 try{ const s=localStorage.getItem("ubik-theme"); if(s && (s==="all"||THEMES[s])) active=s; }catch(e){}
