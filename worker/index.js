@@ -75,6 +75,7 @@ export default {
     const url = new URL(req.url);
     if (req.method === "GET" && url.pathname.startsWith("/ubik/") && (req.headers.get("CF-IPCountry") || "") === "US")
       return new Response(JSON.stringify({ error: "Not available in the United States." }), { status: 451, headers: { ...cors, "Content-Type": "application/json" } });
+    if (req.method === "GET" && url.pathname === "/ubik/markets") return await markets(req, url, cors, env);
     if (req.method === "GET" && url.pathname === "/ubik/editions") return await editionsList(req, cors, env);
     if (req.method === "GET" && url.pathname.startsWith("/ubik/editions/")) return await editionRead(req, url, cors, env);
     if (req.method === "GET" && url.pathname.startsWith("/ubik/")) return await ubik(req, url, cors);
@@ -945,4 +946,31 @@ async function editionRead(req, url, cors, env) {
   const body = JSON.parse(full ? row.holder_json : row.public_json);
   body.day = row.day; body.revised_at = row.revised_at; body.title = row.title; body.standing = standing; body.holder_part_kept = !!row.holder_json;
   return json(200, body, { "x-ubik-key": standing });
+}
+
+
+// ---- market prices next to the forecasts ----
+// GET /ubik/markets?pm=<id,id,...> returns the YES price of listed Polymarket contracts, read from
+// Polymarket's public market data and remembered for five minutes. A price is a fact about a venue,
+// reported with its time; the pages never link to a venue. At most twelve ids per call.
+async function markets(req, url, cors, env) {
+  const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  if (!ALLOWED_ORIGINS.includes(req.headers.get("Origin") || "")) return json(403, { error: "Use the archive site." });
+  const ids = String(url.searchParams.get("pm") || "").split(",").map((x) => x.trim()).filter((x) => /^\d{1,12}$/.test(x)).slice(0, 12);
+  const out = {};
+  await Promise.all(ids.map(async (id) => {
+    const k = "pm:" + id;
+    const cached = await env.KV.get(k, { type: "json" });
+    if (cached) { out[id] = cached; return; }
+    try {
+      const r = await fetch("https://gamma-api.polymarket.com/markets/" + id, { headers: { "Accept": "application/json", "User-Agent": "ubikistan-archive-desk" } });
+      if (!r.ok) { out[id] = { error: r.status }; return; }
+      const m = await r.json();
+      let yes = null; try { yes = parseFloat(JSON.parse(m.outcomePrices || "[]")[0]); } catch (e) {}
+      const row = { yes: Number.isFinite(yes) ? yes : null, question: m.question || "", ends: (m.endDate || "").slice(0, 10), closed: !!m.closed, read: new Date().toISOString() };
+      out[id] = row;
+      await env.KV.put(k, JSON.stringify(row), { expirationTtl: 300 });
+    } catch (e) { out[id] = { error: "unreachable" }; }
+  }));
+  return json(200, { markets: out });
 }

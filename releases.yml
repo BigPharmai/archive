@@ -1,5 +1,10 @@
 # The site's versions, newest first. Add a release at the top whenever the site's features change:
 # a new page, view, tool or way of taking part. Content (records, lore, images) does not change the version.
+- version: "1.26"
+  date: 2026-10-20
+  title: "Market prices next to the forecasts"
+  changes:
+    - "Where a listed contract asks the same question, or a neighbouring one, the pages show its price next to UBIK's number, with the gap, the contract's wording, the venue and the time it was read. Prices come from Polymarket's public data through the desk, refreshed every five minutes; the mapping from question to contract is kept by hand and marked adjacent where the questions differ. No links to any venue."
 - version: "1.25"
   date: 2026-10-20
   title: "Forecasts page for holders only"
