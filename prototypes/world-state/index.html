@@ -1448,7 +1448,7 @@ footer a.disc{font-weight:700}
   <header class="mast">
     <div class="row1">
       <a class="home" href="#cover" title="The cover: choose how to read"><svg class="mark" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="46" fill="none" stroke="var(--ring)" stroke-width="22"/></svg>
-      <h1><span class="wm">Ubikistan</span><span class="ws">World State</span><span class="pw">Powered by UBIK</span><span class="pw proto">Prototype</span></h1></a>
+      <h1><span class="wm">Ubikistan</span><span class="ws">World State</span><span class="pw">Built on ubik.gold data</span><span class="pw proto">Prototype</span></h1></a>
       <nav class="tabs" aria-label="Pages"><a href="#agent" data-view="agent" aria-current="page">Agent edition</a><a href="#edition" data-view="edition">Human edition</a><a href="#films" data-view="films">Films</a><a href="#dashboard" data-view="dash">Dashboard</a><a href="#ledger" data-view="ledger">Ledger</a><a href="#" class="fctab" data-ext="forecasts">Forecasts ↗</a><a href="#ledger/mine" data-view="ledger" data-sub="mine" class="feedtab">My feed <span class="cnt" id="feedcnt"></span></a></nav>
       <span class="tog" role="group" aria-label="Appearance"><button type="button" data-m="light">Light</button><button type="button" data-m="system">Auto</button><button type="button" data-m="dark">Dark</button><button type="button" data-m="neon">Neon</button></span>
     </div>
@@ -1457,7 +1457,7 @@ footer a.disc{font-weight:700}
         <a href="https://www.youtube.com/@ubik_gold" target="_blank" rel="noopener">youtube</a><span class="dot">·</span>
         <a href="https://www.instagram.com/ubik_gold/" target="_blank" rel="noopener">instagram</a><span class="dot">·</span>
         <a href="https://www.tiktok.com/@ubik_gold" target="_blank" rel="noopener">tiktok</a><span class="dot">·</span>
-        <a href="https://www.coingecko.com/en/coins/ubik" target="_blank" rel="noopener">coingecko</a>
+        
         <a class="llms" href="https://ubik.gold/llms.txt" target="_blank" rel="noopener" title="This edition as plain text, for any model">llms.txt</a>
       </nav>
       <span class="stamp" id="stamp">EDITION ${EDITION_DAY} · UPDATED 08:29 EDT</span>
@@ -1624,7 +1624,7 @@ footer a.disc{font-weight:700}
   <div id="cover" class="hidden" role="dialog" aria-modal="true" aria-labelledby="cover-h">
     <div class="coverfig" aria-hidden="true"></div>
     <div class="coverin">
-      <div class="coverhead"><svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="46" fill="none" stroke="var(--ring)" stroke-width="22"/></svg><span class="wm">Ubikistan</span><span class="ws">World State</span><span class="pw">Powered by UBIK</span><span class="pw proto">Prototype</span><span class="mono" id="cover-stamp"></span></div>
+      <div class="coverhead"><svg class="logo" viewBox="0 0 128 128" aria-hidden="true"><circle cx="64" cy="64" r="46" fill="none" stroke="var(--ring)" stroke-width="22"/></svg><span class="wm">Ubikistan</span><span class="ws">World State</span><span class="pw">Built on ubik.gold data</span><span class="pw proto">Prototype</span><span class="mono" id="cover-stamp"></span></div>
       <h1 id="cover-h"></h1>
       <p class="thesis" id="cover-thesis"></p>
       <div class="coverscore" id="cover-score"></div>
@@ -1651,7 +1651,7 @@ footer a.disc{font-weight:700}
     <span>Provenance: <span class="tag v">VERIFIED</span><span class="tag r">REPORTED</span><span class="tag i">INFERENCE</span><span class="tag f">FORECAST</span></span>
     <span>For models: <a href="https://ubik.gold/llms.txt" target="_blank" rel="noopener">llms.txt</a> · <a href="#agent" data-goto="agent">API and MCP</a></span>
     <span><a href="#cover" id="coverlink">Cover</a></span>
-    <span class="msoc" aria-label="UBIK elsewhere"><a href="https://www.youtube.com/@ubik_gold" target="_blank" rel="noopener">youtube</a><a href="https://www.instagram.com/ubik_gold/" target="_blank" rel="noopener">instagram</a><a href="https://www.tiktok.com/@ubik_gold" target="_blank" rel="noopener">tiktok</a><a href="https://www.coingecko.com/en/coins/ubik" target="_blank" rel="noopener">coingecko</a><a href="https://ubik.gold/llms.txt" target="_blank" rel="noopener">llms.txt</a></span>
+    <span class="msoc" aria-label="UBIK elsewhere"><a href="https://www.youtube.com/@ubik_gold" target="_blank" rel="noopener">youtube</a><a href="https://www.instagram.com/ubik_gold/" target="_blank" rel="noopener">instagram</a><a href="https://www.tiktok.com/@ubik_gold" target="_blank" rel="noopener">tiktok</a><a href="https://ubik.gold/llms.txt" target="_blank" rel="noopener">llms.txt</a></span>
     <span class="mtog" role="group" aria-label="Appearance"><button type="button" data-m="light">Light</button><button type="button" data-m="system">Auto</button><button type="button" data-m="dark">Dark</button><button type="button" data-m="neon">Neon</button></span>
   </footer>
 </div>
@@ -1815,9 +1815,9 @@ const THEMES = {iran:"Iran", gulf:"Gulf & oil", ukraine:"Ukraine", india:"India"
 
 // Market prices next to UBIK's. Polymarket, read 13 Oct 2026 14:30 CET. `adj` marks a contract on a neighbouring question, not the same one.
 const MKT = {
- "q_20260928_01": {venue:"Polymarket", p:0.165, c:"Fed Decision in October? · 25 bps increase", vol:"$23M", url:"https://polymarket.com/search?q=Fed%20Decision%20in%20October", t:"2026-10-13"},
- "q_20260928_04": {venue:"Polymarket", p:0.125, c:"Brazil Presidential Election · Lula", vol:"$180M", url:"https://polymarket.com/event/brazil-presidential-election", t:"2026-10-13"},
- "q_20261008_02": {venue:"Polymarket", p:0.23, c:"Russia × Ukraine ceasefire agreement by 31 Oct", vol:"$759K", url:"https://polymarket.com/search?q=Russia%20Ukraine%20ceasefire%20agreement", t:"2026-10-13", adj:true},
+ "q_20260928_01": {venue:"Polymarket", p:0.165, c:"Fed Decision in October? · 25 bps increase", vol:"$23M", t:"2026-10-13"},
+ "q_20260928_04": {venue:"Polymarket", p:0.125, c:"Brazil Presidential Election · Lula", vol:"$180M", t:"2026-10-13"},
+ "q_20261008_02": {venue:"Polymarket", p:0.23, c:"Russia × Ukraine ceasefire agreement by 31 Oct", vol:"$759K", t:"2026-10-13", adj:true},
  "q_20261009_01": {venue:null, note:"No open Brent contract found on Polymarket or Kalshi.", url:"https://polymarket.com/search?q=oil"},
  "q_20261008_01": {venue:null, note:"US-strikes-Iran series closed in June; no October contract found.", url:"https://polymarket.com/search?q=Iran"},
 };
@@ -1935,8 +1935,8 @@ function opener(c){
 function matters(c){
   return c.matters?`<aside class="matters"><span class="lab withav">${ICON("care")}WHY YOU SHOULD CARE</span><p>${c.matters}</p>${c.watch?`<p class="watch"><b>${ICON("watch")}Watch</b> ${c.watch}</p>`:""}
         ${c.risk?`<p class="watch risk"><b>${ICON("markets")}Markets</b> ${c.risk}</p>`:""}
-        ${c.assets?`<div class="assets"><span class="lab2">${ICON("related")}Related</span>${c.assets.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join("")}</div>`:""}
-        ${c.pm?`<div class="assets pm"><span class="lab2">${ICON("contracts")}Contracts</span>${c.pm.map(([n,u,v])=>`<a href="${u}" target="_blank" rel="noopener"><span class="v">${v}</span>${n}</a>`).join("")}</div>`:""}
+        
+        
       </aside>`:"";
 }
 const fcRows=c=>c.fcs.map(id=>byId[id]).map(f=>`<button type="button" data-id="${f.id}"><span class="p">${pct(now(f))}</span><span>${f.q}${MKT[f.id]&&MKT[f.id].venue?` <span class="mk">mkt ${pct(MKT[f.id].p)}</span>`:""}</span><span class="d">by ${fmt(f.due)}</span></button>`).join("");
@@ -2053,7 +2053,7 @@ function renderVs(){
     return `<button type="button" class="vs ${visible(f)?"":"hide"}" data-id="${f.id}" data-t="${f.theme}" aria-pressed="${selected===f.id}">
       <span class="q">${f.q}${m.adj?` <span class="adj" title="Contract on a neighbouring question: ${m.c}">adjacent contract</span>`:""}</span>
       <span class="nums"><span><i>UBIK</i><b>${pct(now(f))}</b></span><span><i>${m.venue}</i><b class="mp">${pct(m.p)}</b></span><span class="gap ${g>0?"up":"dn"}"><i>Gap</i><b>${g>0?"+":"−"}${Math.abs(g)}</b></span></span>
-      <span class="src"><a href="${m.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${m.c} · ${m.vol}</a><span>read ${fmt(m.t)}</span></span></button>`; }).join("");
+      <span class="src"><span>${m.c} · ${m.vol}</span><span>read ${fmt(m.t)}</span></span></button>`; }).join("");
   const none=noM.length?`<div class="vs-none"><span class="lab2">No contract found</span>${noM.map(f=>`<span><button type="button" class="lnk" data-id="${f.id}">${f.q.replace(/^Will /,"").replace(/\?$/,"")}</button> · UBIK ${pct(now(f))} · <a href="${MKT[f.id].url}" target="_blank" rel="noopener">search</a></span>`).join("")}</div>`:"";
   const open=F.filter(f=>f.status==="open").length;
   document.getElementById("vsm").innerHTML=rows+none+`<p class="vs-note">${withM.length} of ${open} open questions have a listed contract. The other ${open-withM.length} are where a view is cheapest to hold and hardest to check. * adjacent contract.</p>`;
@@ -2143,8 +2143,8 @@ function select(id){
   const chainItems=(f.chain&&f.chain.length?f.chain:(c&&c.chain?c.chain.split(/(?<=\.)\s+/).filter(Boolean).slice(0,5):[])).concat([f.q]);
   const missing=k=>`<p class="miss">Not in this snapshot. The engine returns it as <code>${k}</code> at <code>GET /forecasts/${f.id}</code>.</p>`;
   const fold=(icon,title,body,open,cls="")=>`<details class="fold ${cls}" ${open?"open":""}><summary>${ICON(icon,"ico")}<span>${title}</span><i class="chev"></i></summary><div class="fb">${body}</div></details>`;
-  const vs=(()=>{ const m=MKT[f.id]; if(m&&m.venue){ const g=Math.round(gapOf(f)*100); return `<div class="vsrow"><span><i>UBIK</i><b>${pct(pnow)}</b></span><span><i>${m.venue}${m.adj?" · adjacent":""}</i><b>${pct(m.p)}</b></span><span class="gap ${g>0?"up":"dn"}"><i>Gap</i><b>${g>0?"+":"−"}${Math.abs(g)} pts</b></span><span><i>Contract</i><a href="${m.url}" target="_blank" rel="noopener">${m.c}</a><small>${m.vol} · read ${fmt(m.t)}</small></span></div>${m.adj?`<p class="adjnote">The market contract asks a neighbouring question, not this one. The gap is indicative, not a score.</p>`:`<p class="adjnote">When this resolves, the market price at issue time becomes the baseline UBIK is scored against.</p>`}`; }
-    if(m) return `<p class="adjnote">${m.note} UBIK holds ${pct(pnow)} with no price to lean on. <a href="${m.url}" target="_blank" rel="noopener">Search for a contract</a>.</p>`;
+  const vs=(()=>{ const m=MKT[f.id]; if(m&&m.venue){ const g=Math.round(gapOf(f)*100); return `<div class="vsrow"><span><i>UBIK</i><b>${pct(pnow)}</b></span><span><i>${m.venue}${m.adj?" · adjacent":""}</i><b>${pct(m.p)}</b></span><span class="gap ${g>0?"up":"dn"}"><i>Gap</i><b>${g>0?"+":"−"}${Math.abs(g)} pts</b></span><span><i>Contract</i><span>${m.c}</span><small>${m.vol} · read ${fmt(m.t)}</small></span></div>${m.adj?`<p class="adjnote">The market contract asks a neighbouring question, not this one. The gap is indicative, not a score.</p>`:`<p class="adjnote">When this resolves, the market price at issue time becomes the baseline UBIK is scored against.</p>`}`; }
+    if(m) return `<p class="adjnote">${m.note} UBIK holds ${pct(pnow)} with no price to lean on. No listed contract checked.</p>`;
     return `<p class="adjnote">No listed contract checked for this question yet.</p>`; })();
   const hasMkt=!!(MKT[f.id]&&MKT[f.id].venue);
   dos.innerHTML=`<div class="dossier sheet" data-t="${f.theme}">

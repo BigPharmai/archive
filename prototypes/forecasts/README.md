@@ -1,8 +1,8 @@
 # Ubikistan Forecasts
 
-A phone-first page that reads the engine's forecasts across contract markets, stocks and crypto: each with a Long / Short / Cash stance, conviction, the gap against the market, horizon, entry and exit, and direct links to the venues. A History tab lists every settled forecast with its score.
+A phone-first page that reads the engine's forecasts across contract markets, stocks and crypto: each as leaning yes, leaning no or open, with the gap against the market where a contract exists, what settles it and when, and the names it touches, for reference. A History tab lists every settled forecast with its score. Until 20 October 2026 (branch `forecast-pages-1.22`) it showed positions, entries, exits and venue links; those went in the legal pass of that evening.
 
-The rule: where a contract trades, gap = UBIK probability − market price; five points or more is Buy YES or Buy NO, less is cash. Where nothing trades, above 60% backs the YES leg, below 40% the NO leg, between is cash. Positions are implied by forecasts, not advice; no price targets.
+The reading: above 60% the engine leans yes, below 40% it leans no, between it calls the question open; the gap is the engine's probability minus the market's where a contract exists. Nothing on the page is a position, a recommendation or a suggestion of what to do.
 
 Data is a snapshot of the preview API (forecasts read 15 Oct 2026, Polymarket 13 Oct, Kalshi via AIXBT 14 Oct, AIXBT topics 16 Oct). The mapping from question to instruments and venues is hand-written in the page. The page was called Ubikistan Calls until 20 October 2026; the words it uses now are in `lore/ubik-forecast.md` (forecast, issued, resolves, scored).
 
