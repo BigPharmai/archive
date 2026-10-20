@@ -424,7 +424,9 @@ function buildCalls(){
 function applyEdition(raw){
   const t=transform(raw); F=t.F; TS=t.TS; EXTRA_CAL=t.EXTRA_CAL; EDITION_DAY=t.DATE; READ.forecasts=t.DATE;
   buildCalls(); F_BY=Object.fromEntries(F.map(f=>[f.id,f]));
-  ALL=CALLS.map(build).sort((a,b)=>rank(a)-rank(b)||(rank(a)===0?Math.abs(b.p-.5)-Math.abs(a.p-.5)||a.d-b.d:a.d-b.d));
+  // listed contracts first, widest gap first; then the rest by distance from the coin flip, soonest first
+  const hasM=o=>o.market&&o.market.p!=null?0:1, gapAbs=o=>o.market&&o.market.p!=null?Math.abs(o.p-o.market.p):0;
+  ALL=CALLS.map(build).sort((a,b)=>hasM(a)-hasM(b)||gapAbs(b)-gapAbs(a)||Math.abs(b.p-.5)-Math.abs(a.p-.5)||a.d-b.d);
   DONE=F.filter(f=>f.status!=="open").sort((a,b)=>(b.resolved||"").localeCompare(a.resolved||""));
   render(); moves(); calendar(); record(); stamp(); renderGate();
 }
