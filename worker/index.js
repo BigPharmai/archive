@@ -50,6 +50,8 @@
 const REPO = "ubikistan/archive";
 const SITE = "https://ubikistan.github.io/archive/";
 const ALLOWED_ORIGINS = ["https://ubikistan.github.io", "http://localhost:8765", "http://localhost:8766"];
+const UBIK = "https://ubik.gold"; // the forecast service; GET /ubik/<path> passes a read through for the site's pages
+const UBIK_PATHS = /^\/(llms\.txt|synthesis|forecasts(\/q_\d{8}_\d{2})?)$/;
 const MAX_TEXT = 100_000;
 const MAX_IMAGE = 3 * 1024 * 1024;
 const MAX_IMAGES = 6;
@@ -71,7 +73,12 @@ export default {
     };
     if (req.method === "OPTIONS") return new Response(null, { headers: cors });
     const url = new URL(req.url);
-    const reply = (status, body) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+    if (req.method === "GET" && url.pathname.startsWith("/ubik/") && (req.headers.get("CF-IPCountry") || "") === "US")
+      return new Response(JSON.stringify({ error: "Not available in the United States." }), { status: 451, headers: { ...cors, "Content-Type": "application/json" } });
+    if (req.method === "GET" && url.pathname === "/ubik/editions") return await editionsList(req, cors, env);
+    if (req.method === "GET" && url.pathname.startsWith("/ubik/editions/")) return await editionRead(req, url, cors, env);
+    if (req.method === "GET" && url.pathname.startsWith("/ubik/")) return await ubik(req, url, cors);
+    const reply =(status, body) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
     try {
       const path = url.pathname;
       if (req.method === "GET") {
@@ -120,6 +127,8 @@ export default {
       return reply(e.status || 500, { error: e.public || "The desk could not do this. Try again later.", detail: e.public ? undefined : String(e.message || e) });
     }
   },
+  // the cron in wrangler.toml: keep the day's edition, public and (with a holder's key) holder parts
+  async scheduled(event, env, ctx) { ctx.waitUntil(storeEdition(env)); },
 };
 
 async function allow(key, max, env) {
@@ -852,5 +861,88 @@ function slug(s) { return s.replace(/^.*\//, "").replace(/\.md$/, "").toLowerCas
 function unb64url(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; return Uint8Array.from(atob(s), (c) => c.charCodeAt(0)); }
 function b64url(bytes) { return b64encodeBytes(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function b64encode(text) { return b64encodeBytes(new TextEncoder().encode(text)); }
+
+// ---- ubik.gold pass-through ----
+// The forecast pages run in the browser and ubik.gold does not answer browser calls from other
+// sites, so GET /ubik/<path> fetches https://ubik.gold/<path> for the archive site and hands the
+// answer back unchanged. A holder's own key, sent as Authorization: Bearer, is forwarded as it came
+// and forgotten; the answer's x-ubik-key (holder, locked, invalid) is passed back so the page can say
+// which it was. Only the site's own origins may call this, and only the read endpoints listed above.
+async function ubik(req, url, cors) {
+  const path = url.pathname.slice(5);
+  const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
+  if (!ALLOWED_ORIGINS.includes(req.headers.get("Origin") || "")) return json(403, { error: "Use the archive site." });
+  if (!UBIK_PATHS.test(path)) return json(404, { error: "Not a ubik.gold read endpoint." });
+  const headers = { "Accept": "application/json, text/plain", "User-Agent": "ubikistan-archive-desk" };
+  const auth = req.headers.get("Authorization") || "";
+  if (/^Bearer [A-Za-z0-9._~-]{16,128}$/.test(auth)) headers["Authorization"] = auth;
+  const r = await fetch(UBIK + path + url.search, { headers });
+  const out = new Headers({ ...cors, "Access-Control-Expose-Headers": "x-ubik-key, retry-after", "Cache-Control": "no-store" });
+  out.set("Content-Type", r.headers.get("content-type") || "application/json");
+  for (const h of ["x-ubik-key", "retry-after"]) if (r.headers.get(h)) out.set(h, r.headers.get(h));
+  return new Response(r.body, { status: r.status, headers: out });
+}
 function b64encodeBytes(bytes) { let s = ""; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); }
 function b64decode(b64) { return new TextDecoder().decode(Uint8Array.from(atob(String(b64).replace(/\s/g, "")), (c) => c.charCodeAt(0))); }
+
+// ---- the editions store ----
+// Each edition day is kept twice: as everyone may read it (fetched without a key) and, when the desk
+// has a holder's key (secret UBIK_KEY), as a holder reads it. The public part is served to anyone on
+// the site; the holder part only to a request that carries a key ubik.gold itself answers "holder" to,
+// checked per request and remembered for ten minutes. Nothing a holder sends is stored.
+const EDITION_PARTS = ["/synthesis?include=all", "/forecasts?status=open&include=history,details", "/forecasts?status=settled&include=history,details"];
+async function ubikGet(path, key) {
+  const headers = { "Accept": "application/json", "User-Agent": "ubikistan-archive-desk" };
+  if (key) headers["Authorization"] = "Bearer " + key;
+  const r = await fetch(UBIK + path, { headers });
+  if (!r.ok) throw new Error(`ubik.gold ${path}: ${r.status}`);
+  return { body: await r.json(), key: r.headers.get("x-ubik-key") || "" };
+}
+async function fetchEdition(key) {
+  const [syn, open, settled] = await Promise.all(EDITION_PARTS.map((p) => ubikGet(p, key)));
+  const data = { synthesis: syn.body, open: open.body, settled: settled.body, fetched_at: new Date().toISOString(), as: key ? syn.key || "key" : "public" };
+  return data;
+}
+function editionDay(syn) { return ((syn.meta || {}).updated_at || new Date().toISOString()).slice(0, 10); }
+function editionTitle(syn) { const m = /^#\s+(.+)$/m.exec(syn.prose || ""); return m ? m[1].trim() : "Edition"; }
+async function storeEdition(env) {
+  const pub = await fetchEdition(null);
+  const day = editionDay(pub.synthesis), revised = (pub.synthesis.meta || {}).revised_at || (pub.synthesis.meta || {}).updated_at || pub.fetched_at;
+  const have = await env.DB.prepare("SELECT revised_at, holder_json IS NOT NULL AS has_holder FROM editions WHERE day = ?").bind(day).first();
+  let holder = null;
+  if (env.UBIK_KEY) { try { const h = await fetchEdition(env.UBIK_KEY); if (h.as === "holder") holder = JSON.stringify(h); } catch (e) {} }
+  if (have && have.revised_at === revised && (holder === null || have.has_holder)) return;
+  await env.DB.prepare("INSERT INTO editions (day, revised_at, title, public_json, holder_json, stored_at) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(day) DO UPDATE SET revised_at = excluded.revised_at, title = excluded.title, public_json = excluded.public_json, holder_json = COALESCE(excluded.holder_json, editions.holder_json), stored_at = excluded.stored_at")
+    .bind(day, revised, editionTitle(pub.synthesis), JSON.stringify(pub), holder, new Date().toISOString()).run();
+}
+async function keyStanding(req, env) {
+  const auth = req.headers.get("Authorization") || "";
+  const m = /^Bearer ([A-Za-z0-9._~-]{16,128})$/.exec(auth);
+  if (!m) return "none";
+  const digest = b64url(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(m[1]))));
+  const cached = await env.KV.get("ubikkey:" + digest);
+  if (cached) return cached;
+  let standing = "invalid";
+  try { const r = await fetch(UBIK + "/llms.txt", { headers: { "Authorization": auth, "User-Agent": "ubikistan-archive-desk" } }); standing = r.headers.get("x-ubik-key") || "invalid"; } catch (e) { standing = "unknown"; }
+  await env.KV.put("ubikkey:" + digest, standing, { expirationTtl: 600 });
+  return standing;
+}
+async function editionsList(req, cors, env) {
+  const json = (status, body) => new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json", "Cache-Control": "no-store" } });
+  if (!ALLOWED_ORIGINS.includes(req.headers.get("Origin") || "")) return json(403, { error: "Use the archive site." });
+  const { results } = await env.DB.prepare("SELECT day, revised_at, title, holder_json IS NOT NULL AS has_holder, stored_at FROM editions ORDER BY day DESC LIMIT 400").all();
+  return json(200, { editions: results.map((r) => ({ day: r.day, revised_at: r.revised_at, title: r.title, holder_part: !!r.has_holder, stored_at: r.stored_at })) });
+}
+async function editionRead(req, url, cors, env) {
+  const json = (status, body, extra = {}) => new Response(JSON.stringify(body), { status, headers: { ...cors, ...extra, "Content-Type": "application/json", "Cache-Control": "no-store", "Access-Control-Expose-Headers": "x-ubik-key" } });
+  if (!ALLOWED_ORIGINS.includes(req.headers.get("Origin") || "")) return json(403, { error: "Use the archive site." });
+  const day = url.pathname.slice(15);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return json(404, { error: "Not an edition day." });
+  const row = await env.DB.prepare("SELECT day, revised_at, title, public_json, holder_json FROM editions WHERE day = ?").bind(day).first();
+  if (!row) return json(404, { error: "No edition kept for that day." });
+  const standing = await keyStanding(req, env);
+  const full = standing === "holder" && row.holder_json;
+  const body = JSON.parse(full ? row.holder_json : row.public_json);
+  body.day = row.day; body.revised_at = row.revised_at; body.title = row.title; body.standing = standing; body.holder_part_kept = !!row.holder_json;
+  return json(200, body, { "x-ubik-key": standing });
+}

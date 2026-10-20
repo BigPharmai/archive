@@ -1,5 +1,12 @@
 # The site's versions, newest first. Add a release at the top whenever the site's features change:
 # a new page, view, tool or way of taking part. Content (records, lore, images) does not change the version.
+- version: "1.22"
+  date: 2026-10-20
+  title: "Forecast pages live, holders' key, archive of editions"
+  changes:
+    - "The World State and Forecasts pages are no longer sealed: they read ubik.gold's current edition through the desk, with everything free on ubik.gold open and the holder parts opened by a reader's own ubik.gold key (a wallet with 200,000 UBIK)."
+    - "The desk keeps every edition day it sees; the History tab opens earlier editions as they were."
+    - "A disclaimer page at /prototypes/disclaimer/, linked from every forecast page; readers confirm once that they are 18 or over and not in the United States, and the desk does not serve the United States."
 - version: "1.21"
   date: 2026-10-20
   title: "Forecast pages"

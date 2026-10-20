@@ -97,3 +97,12 @@ CREATE TABLE IF NOT EXISTS stat_seen (day TEXT NOT NULL, h TEXT NOT NULL, PRIMAR
 CREATE TABLE IF NOT EXISTS stat_pages (day TEXT NOT NULL, page TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, page));
 CREATE TABLE IF NOT EXISTS stat_refs (day TEXT NOT NULL, host TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, host));
 CREATE TABLE IF NOT EXISTS stat_countries (day TEXT NOT NULL, cc TEXT NOT NULL, n INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (day, cc));
+-- the forecast service's editions, one row per edition day: what everyone may read and what holders may
+CREATE TABLE IF NOT EXISTS editions (
+  day TEXT PRIMARY KEY,
+  revised_at TEXT NOT NULL,
+  title TEXT NOT NULL,
+  public_json TEXT NOT NULL,
+  holder_json TEXT,
+  stored_at TEXT NOT NULL
+);

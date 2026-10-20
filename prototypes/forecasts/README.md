@@ -6,8 +6,8 @@ The rule: where a contract trades, gap = UBIK probability − market price; five
 
 Data is a snapshot of the preview API (forecasts read 15 Oct 2026, Polymarket 13 Oct, Kalshi via AIXBT 14 Oct, AIXBT topics 16 Oct). The mapping from question to instruments and venues is hand-written in the page. The page was called Ubikistan Calls until 20 October 2026; the words it uses now are in `lore/ubik-forecast.md` (forecast, issued, resolves, scored).
 
-## Sealed
+## Live
 
-`index.html` is encrypted in the file (AES-256-GCM, PBKDF2) with the same passphrase as the World State page; see `../world-state/lock.py`. Nothing is sent anywhere when it is opened.
+Since 20 October 2026 the page reads the forecasts from ubik.gold through the archive's desk, as the World State page does (see `../world-state/README.md`); the mapping from question to instruments stays hand-written in the page (`INSTR`). A reader's ubik.gold key opens the holder parts; the page itself holds none.
 
-Run by the UBIK team under ubik.gold's terms. Forecasts are probabilities, not financial advice. AI-generated · Terms: https://ubik.gold/terms
+A non-commercial, community-run initiative, built on content published by ubik.gold under its terms. Not financial advice; for entertainment and education only; AI-generated; not for persons under 18 or in the United States. The full text is at `../disclaimer/`.

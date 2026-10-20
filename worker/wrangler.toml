@@ -2,3 +2,7 @@ name = "ubikistan-guest-desk"
 main = "index.js"
 compatibility_date = "2026-09-01"
 workers_dev = true
+
+# the editions store: look for a new or revised edition at a quarter past, from 09 to 17 UTC
+[triggers]
+crons = ["15 9-17 * * *"]

@@ -9,9 +9,13 @@ What it shows: the day's synthesis; each current as a digest (lead lines with pr
 Snapshot caveats: Polymarket prices were read on 13 October 2026 and are hard-coded. The crypto section (05, bylined AIXBT) and its three forecasts are sample content written for the prototype, not engine output. The publication window (holders 06:00 UTC, public 18:00 UTC) is proposed, not announced.
 
 
-## Sealed
+## Live, with the public part open and the rest for holders
 
-`index.html` (and the archived version) are published sealed: the page is encrypted inside the file with AES-256-GCM, the key derived from a passphrase with PBKDF2-SHA256 (300,000 rounds). Without the passphrase the content is not in the file. The gate remembers the passphrase on a device if asked. `lock.py SOURCE.html OUT.html "passphrase"` seals a page; `lock.py --regate SEALED.html` rewrites the gate's wording around the same ciphertext. The plaintext source stays off the repository. Earlier commits on this branch hold the unsealed page.
+Since 20 October 2026 the page carries no edition of its own. It renders a public snapshot inlined at build time (what anyone may read), then asks the archive's desk for the current edition and for the desk's archive of earlier editions. The desk passes a reader's own ubik.gold key through to ubik.gold, which decides what that key may see (a wallet holding 200,000 UBIK opens the holder parts); the key stays in the reader's browser and the desk keeps nothing. Everything free on ubik.gold stays free here; everything held for holders stays held. The desk refuses requests from the United States, and the page asks every reader once to confirm they are 18 or over and not in the United States.
+
+The desk keeps one row per edition day (public part, and holder part when the desk has a key of its own as the secret `UBIK_KEY`), looked for at a quarter past the hour from 09:00 to 17:00 UTC. The History tab lists them; opening one renders that day as it was.
+
+`lock.py` is kept for the sealed versions in `archive/`; the live page is not sealed.
 
 ## Phones
 
@@ -21,8 +25,8 @@ Below 640px the page is one column: a scrolling tab strip under the wordmark, si
 
 - `archive/2026-10-14-editorial-first.html`: the editorial-first version (cover, agent and human editions, films, dashboard, ledger, Mine), frozen before the board-first update of 14 October 2026. (A local tag `world-state-editorial-first` exists; tags cannot be pushed from this environment.)
 
-## Team page
+## Who runs it
 
-Run by the UBIK team under ubik.gold's terms. Forecasts are probabilities, not financial advice. AI-generated · Terms: https://ubik.gold/terms
+A non-commercial, community-run initiative, built on content published by ubik.gold under its terms. Not financial advice; for entertainment and education only; AI-generated; not for persons under 18 or in the United States. The full text is at `../disclaimer/`.
 
 The words the pages use (forecast, issued, resolves, scored; never prediction, call, bet or odds) are set out in `lore/ubik-forecast.md`.

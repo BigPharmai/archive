@@ -7,6 +7,7 @@ name: Deploy the desk
 #   ARCHIVE_GH_CLIENT_ID, ARCHIVE_GH_CLIENT_SECRET     the same App, for "Sign in with GitHub"
 #   ARCHIVE_X_CLIENT_ID, ARCHIVE_X_CLIENT_SECRET       optional: "Sign in with X"
 #   ARCHIVE_ADMINS                                     optional: who may hide remarks, e.g. github:name
+#   ARCHIVE_UBIK_KEY                                   optional: a holder's ubik.gold key, so the desk can keep each edition's holder part
 
 on:
   push:
@@ -73,8 +74,9 @@ jobs:
           X_CLIENT_ID: ${{ secrets.ARCHIVE_X_CLIENT_ID }}
           X_CLIENT_SECRET: ${{ secrets.ARCHIVE_X_CLIENT_SECRET }}
           ADMINS: ${{ secrets.ARCHIVE_ADMINS }}
+          UBIK_KEY: ${{ secrets.ARCHIVE_UBIK_KEY }}
         run: |
-          for N in APP_ID APP_PRIVATE_KEY GH_CLIENT_ID GH_CLIENT_SECRET X_CLIENT_ID X_CLIENT_SECRET ADMINS; do
+          for N in APP_ID APP_PRIVATE_KEY GH_CLIENT_ID GH_CLIENT_SECRET X_CLIENT_ID X_CLIENT_SECRET ADMINS UBIK_KEY; do
             V="${!N}"
             if [ -n "$V" ]; then printf '%s' "$V" | npx -y wrangler@3 secret put "$N" >/dev/null && echo "set $N"; fi
           done
