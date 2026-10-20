@@ -13,7 +13,7 @@ Snapshot caveats: Polymarket prices were read on 13 October 2026 and are hard-co
 
 Since 20 October 2026 the page carries no edition of its own. It renders a public snapshot inlined at build time (what anyone may read), then asks the archive's desk for the current edition and for the desk's archive of earlier editions. The desk passes a reader's own ubik.gold key through to ubik.gold, which decides what that key may see (a wallet holding 200,000 UBIK opens the holder parts); the key stays in the reader's browser and the desk keeps nothing. Everything free on ubik.gold stays free here; everything held for holders stays held. The desk refuses requests from the United States, and the page asks every reader once to confirm they are 18 or over and not in the United States.
 
-The desk keeps one row per edition day (public part, and holder part when the desk has a key of its own as the secret `UBIK_KEY`), looked for at a quarter past the hour from 09:00 to 17:00 UTC. The History tab lists them; opening one renders that day as it was.
+The desk keeps one row per edition day (public part, and holder part when the desk has a key of its own as the secret `UBIK_KEY`), looked for at a quarter past every hour. The History tab lists them; opening one renders that day as it was.
 
 `lock.py` is kept for the sealed versions in `archive/`; the live page is not sealed.
 
