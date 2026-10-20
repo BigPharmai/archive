@@ -1626,7 +1626,7 @@ footer a.disc{font-weight:700}
       <div class="doors">
         <button type="button" data-reader="human"><b>Read it as a human</b><span>The board: every open question with its number, then the edition behind it.</span></button>
         <button type="button" data-reader="agent"><b>Read it as an agent</b><span>The same edition as data: thesis, mechanisms, record IDs, llms.txt, API and MCP.</span></button>
-        <a class="door-link" data-ext="forecasts" href="#"><b>Open the Forecasts ↗</b><span>Every open question as a position: long, short or cash, with its horizon and what settles it.</span></a>
+        <a class="door-link" data-ext="forecasts" href="#"><b>Open the Forecasts ↗</b><span>Holders only. Every open question read against the market, with what settles it and when.</span></a>
       </div>
       <p class="coverfoot">Your choice is remembered on this device. The tabs switch between the two at any time.</p>
     </div>
@@ -1747,7 +1747,7 @@ function transform(raw){
 const keyOf=()=>{ try{ return localStorage.getItem("ubik-key")||""; }catch(e){ return ""; } };
 async function deskGet(path, withKey=true){
   const headers={}; const k=withKey?keyOf():""; if(k) headers["Authorization"]="Bearer "+k;
-  const r=await fetch(DESK+"/ubik"+path,{headers}); const standing=r.headers.get("x-ubik-key")||(k?"unknown":"none");
+  const r=await fetch(DESK+"/ubik"+path,{headers}); const standing=r.headers.get("x-ubik-key")||(k?"invalid":"none");
   if(r.status===451){ notAvailable(); throw new Error("451"); }
   if(!r.ok) throw new Error(`desk ${path}: ${r.status}`);
   return {body:await r.json(), standing};
